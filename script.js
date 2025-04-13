@@ -1,61 +1,46 @@
-describe('Tic Tac Toe', () => {
-  const baseUrl = 'http://localhost:3000'; // Replace with your actual base URL
+let currentPlayer = "x";
+let players = { x: "", o: "" };
 
-  it('Loads the game', () => {
-    cy.visit(baseUrl + "/main.html");
-    cy.get('h1').should('contain', 'Tic Tac Toe');
-  });
+document.getElementById("submit").addEventListener("click", () => {
+  const player1 = document.getElementById("player1").value.trim();
+  const player2 = document.getElementById("player2").value.trim();
 
-  it('Allows players to input names and play one move each', () => {
-    cy.visit(baseUrl + "/main.html");
-    
-    // Input player names
-    cy.get('#player1').should('be.visible').type('Player1');
-    cy.get('#player2').should('be.visible').type('Player2');
-    cy.get('#submit').click();
+  if (!player1 || !player2) return;
 
-    cy.get('.message').should('contain', "Player1, you're up");
+  players.x = player1;
+  players.o = player2;
 
-    // Wait for cells to be visible
-    cy.get('#1').should('be.visible').click();
-    cy.get('#1').should('contain', 'x');
+  document.getElementById("gameBoard").style.display = "grid";
+  document.querySelector(".message").textContent = `${player1}, you're up`;
+});
 
-    cy.get('.message').should('contain', "Player2, you're up");
-    cy.get('#4').should('be.visible').click();
-    cy.get('#4').should('contain', 'o');
-  });
+const winPatterns = [
+  [1, 2, 3], [4, 5, 6], [7, 8, 9], // rows
+  [1, 4, 7], [2, 5, 8], [3, 6, 9], // columns
+  [1, 5, 9], [3, 5, 7]             // diagonals
+];
 
-  it('Plays full game and Player1 wins', () => {
-    cy.visit(baseUrl + "/main.html");
+const boardState = {};
 
-    cy.get('#player1').should('be.visible').type('Player1');
-    cy.get('#player2').should('be.visible').type('Player2');
-    cy.get('#submit').click();
+document.querySelectorAll(".cell").forEach(cell => {
+  cell.addEventListener("click", () => {
+    if (cell.textContent || !players.x || !players.o) return;
 
-    cy.get('.message').should('contain', "Player1, you're up");
+    cell.textContent = currentPlayer;
+    boardState[cell.id] = currentPlayer;
 
-    const moves = ['#1', '#4', '#2', '#5', '#3']; // Player1 wins
-    for (const id of moves) {
-      cy.get(id).should('be.visible').click();
+    if (checkWin(currentPlayer)) {
+      document.querySelector(".message").textContent = `${players[currentPlayer]} congratulations you won!`;
+      return;
     }
 
-    cy.get('.message').should('contain', "Player1 congratulations you won!");
-  });
-
-  it('Plays full game and Player2 wins', () => {
-    cy.visit(baseUrl + "/main.html");
-
-    cy.get('#player1').should('be.visible').type('Player1');
-    cy.get('#player2').should('be.visible').type('Player2');
-    cy.get('#submit').click();
-
-    cy.get('.message').should('contain', "Player1, you're up");
-
-    const moves = ['#1', '#4', '#2', '#5', '#8', '#6']; // Player2 wins
-    for (const id of moves) {
-      cy.get(id).should('be.visible').click();
-    }
-
-    cy.get('.message').should('contain', "Player2 congratulations you won!");
+    currentPlayer = currentPlayer === "x" ? "o" : "x";
+    document.querySelector(".message").textContent = `${players[currentPlayer]}, you're up`;
   });
 });
+
+function checkWin(player) {
+  return winPatterns.some(pattern =>
+    pattern.every(cellId => boardState[cellId] === player)
+  );
+}
