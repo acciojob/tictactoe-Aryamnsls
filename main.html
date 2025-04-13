@@ -2,14 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Safe Function Call Example</title>
+  <title>Tic Tac Toe</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <h1>Tic Tac Toe</h1>
-  <button id="fetchBtn">Fetch Data</button>
-  <p id="result"></p>
+
+  <input type="text" id="player1" placeholder="Enter Player 1 name">
+  <input type="text" id="player2" placeholder="Enter Player 2 name">
+  <button id="submit">Start Game</button>
+
+  <p class="message"></p>
+
+  <div id="board">
+    <!-- 3x3 grid -->
+    <div id="1" class="cell"></div>
+    <div id="2" class="cell"></div>
+    <div id="3" class="cell"></div>
+    <div id="4" class="cell"></div>
+    <div id="5" class="cell"></div>
+    <div id="6" class="cell"></div>
+    <div id="7" class="cell"></div>
+    <div id="8" class="cell"></div>
+    <div id="9" class="cell"></div>
+  </div>
 
   <script src="script.js"></script>
 </body>
